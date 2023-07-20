@@ -10,6 +10,7 @@ const AddTransaction = ({ onAdd }) => {
   };
 
   const [form, setForm] = useState(initForm);
+  const [formError, setFormError] = useState(0);
 
   const changeHandler = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,13 +18,23 @@ const AddTransaction = ({ onAdd }) => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    onAdd(form);
-    setForm(initForm);
-    typeInput.current.focus();
+
+    if (form.type && form.amount && form.description) {
+      onAdd(form);
+      setForm(initForm);
+      setFormError(0);
+      typeInput.current.focus();
+    } else {
+      setFormError(1);
+    }
   };
 
   return (
-    <section className="border rounded py-3 px-4 my-5">
+    <section
+      className={`border rounded py-3 px-4 my-5 ${
+        formError ? "border-red-500" : ""
+      }`}
+    >
       <h2>Add new transaction</h2>
       <form className="mt-2" onSubmit={onSubmitHandler}>
         <select

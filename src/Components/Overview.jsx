@@ -3,7 +3,7 @@ const Overview = ({ expense, income }) => {
     <>
       <div className="flex justify-between border rounded font-bold text-gray-700 p-2 mb-4">
         <h2>balance:</h2>
-        <span>{expense - income}$</span>
+        <span>{income - expense}$</span>
       </div>
       <div className="columns-2">
         <div className="border rounded p-2">

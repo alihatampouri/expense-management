@@ -1,12 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddTransaction from "./AddTransaction";
 
 const Transactions = ({ onAdd, transactions }) => {
+  useEffect(() => filterTransactions(searchItem), [transactions]);
+
   const [showInsertForm, setShowInsertForm] = useState(false);
+  const [searchItem, setSearchItem] = useState("");
+  const [filteredTransactions, setFilteredTransactions] =
+    useState(transactions);
 
   const onAddHandler = (newItem) => {
     onAdd(newItem);
     setShowInsertForm(false);
+  };
+
+  const searchChangeHandler = (e) => {
+    setSearchItem(e.target.value);
+    filterTransactions(e.target.value);
+  };
+
+  const filterTransactions = (search) => {
+    if (search) {
+      const filteredItems = transactions.filter((t) =>
+        t.description.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredTransactions(filteredItems);
+    } else {
+      setFilteredTransactions(transactions);
+    }
   };
 
   return (
@@ -21,13 +42,19 @@ const Transactions = ({ onAdd, transactions }) => {
         </button>
       </div>
       {showInsertForm && <AddTransaction onAdd={onAddHandler} />}
-      <input
-        type="text"
-        className="rounded border-2 focus:border-gray-400 outline-none w-full my-2 py-1 px-2 transition-all"
-        placeholder="Search..."
-      />
+      {transactions.length ? (
+        <input
+          type="text"
+          className="rounded border-2 focus:border-gray-400 outline-none w-full my-2 py-1 px-2 transition-all"
+          placeholder="Search..."
+          value={searchItem}
+          onChange={searchChangeHandler}
+        />
+      ) : (
+        <div className="text-center p-2 mt-5 text-gray-400 animate-pulse">transaction not found!</div>
+      )}
       <ul>
-        {transactions.map((transaction) => (
+        {filteredTransactions.map((transaction) => (
           <li
             key={transaction.id}
             className={`flex justify-between py-2 px-3 rounded-md my-2 text-white ${
